@@ -1,6 +1,5 @@
 import { getUserDecks } from "@/db/queries";
 import { auth } from "@clerk/nextjs/server";
-import { Protect } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -129,20 +128,15 @@ export default async function DashboardPage() {
 
         {userDecks.length > 0 && (
           <div className="mt-8 text-center">
-            <Protect
-              feature="unlimited_decks"
-              fallback={
-                isAtFreeLimit ? (
-                  <Button disabled variant="outline" size="lg">
-                    Upgrade to create more decks
-                  </Button>
-                ) : (
-                  <CreateDeckDialog size="lg" variant="outline" />
-                )
-              }
-            >
+            {hasUnlimitedDecks ? (
               <CreateDeckDialog size="lg" variant="outline" />
-            </Protect>
+            ) : isAtFreeLimit ? (
+              <Button disabled variant="outline" size="lg">
+                Upgrade to create more decks
+              </Button>
+            ) : (
+              <CreateDeckDialog size="lg" variant="outline" />
+            )}
           </div>
         )}
       </div>

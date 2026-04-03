@@ -3,8 +3,7 @@ import {
   ClerkProvider,
   SignInButton,
   SignUpButton,
-  SignedIn,
-  SignedOut,
+  Show,
   UserButton,
 } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
@@ -30,41 +29,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-      }}
-    >
-      <html lang="en" className="dark">
-        <body className={`${poppins.variable} antialiased font-sans`}>
+    <html lang="en" className={`dark ${poppins.variable}`}>
+      <body className="antialiased font-sans">
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark,
+          }}
+        >
           <header className="border-b border-gray-200 dark:border-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center py-4">
                 <h1 className="text-xl font-semibold">Flashy Cardy Course</h1>
                 <div className="flex items-center gap-4">
-                  <SignedOut>
-                    <SignInButton mode="modal">
+                  <Show when="signed-out">
+                    <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
                       <Button variant="default" size="default">
                         Sign In
                       </Button>
                     </SignInButton>
-                    <SignUpButton mode="modal">
+                    <SignUpButton mode="modal" fallbackRedirectUrl="/dashboard">
                       <Button variant="secondary" size="default">
                         Sign Up
                       </Button>
                     </SignUpButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton afterSignOutUrl="/" />
-                  </SignedIn>
+                  </Show>
+                  <Show when="signed-in">
+                    <UserButton />
+                  </Show>
                 </div>
               </div>
             </div>
           </header>
           {children}
           <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
