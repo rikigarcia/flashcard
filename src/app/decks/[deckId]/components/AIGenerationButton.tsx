@@ -1,16 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Protect } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Sparkles, Loader2 } from "lucide-react";
-import Link from "next/link";
 import { generateAIFlashcardsAction } from "../actions";
 
 interface AIGenerationButtonProps {
@@ -57,66 +49,25 @@ export default function AIGenerationButton({
     }
   };
 
-  // If deck doesn't have a description, show disabled button with tooltip
-  if (!hasDescription) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="inline-block">
-              <Button variant="outline" size={size} disabled>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Generate with AI
-              </Button>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Please add a description to your deck to enable AI generation</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-
   return (
-    <Protect
-      feature="ai_flashcard_generation"
-      fallback={
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href="/pricing">
-                <Button variant="outline" size={size}>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Generate with AI
-                </Button>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>AI flashcard generation is a Pro feature. Click to upgrade!</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      }
+    <Button
+      variant="outline"
+      size={size}
+      onClick={handleGenerate}
+      disabled={isGenerating || !hasDescription}
+      title={!hasDescription ? "Add a deck description to enable AI generation" : undefined}
     >
-      <Button
-        variant="outline"
-        size={size}
-        onClick={handleGenerate}
-        disabled={isGenerating}
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Generating...
-          </>
-        ) : (
-          <>
-            <Sparkles className="mr-2 h-4 w-4" />
-            Generate with AI
-          </>
-        )}
-      </Button>
-    </Protect>
+      {isGenerating ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Generating...
+        </>
+      ) : (
+        <>
+          <Sparkles className="mr-2 h-4 w-4" />
+          Generate with AI
+        </>
+      )}
+    </Button>
   );
 }
