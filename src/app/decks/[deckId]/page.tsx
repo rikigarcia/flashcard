@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { getDeckById, getCardsByDeckId } from "@/db/queries";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +36,9 @@ export default async function DeckPage({ params }: DeckPageProps) {
   }
 
   try {
-    // First check if deck exists and user has access
+    const { has } = await auth();
+    const hasAIFeature = has({ feature: "ai_flashcard_generation" });
+
     const deck = await getDeckById(deckId);
 
     if (!deck) {
@@ -158,6 +161,7 @@ export default async function DeckPage({ params }: DeckPageProps) {
                   <AIGenerationButton
                     deckId={deckId}
                     deckDescription={deck.description || undefined}
+                    hasAIFeature={hasAIFeature}
                   />
                   <AddCardDialog
                     deckId={deckId}
@@ -241,6 +245,7 @@ export default async function DeckPage({ params }: DeckPageProps) {
                     <AIGenerationButton
                       deckId={deckId}
                       deckDescription={deck.description || undefined}
+                      hasAIFeature={hasAIFeature}
                       size="lg"
                     />
                     <AddCardDialog
